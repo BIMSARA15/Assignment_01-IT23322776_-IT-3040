@@ -4,7 +4,7 @@ const { test, expect } = require('@playwright/test');
 const INPUT_SELECTOR = 'textarea[placeholder*="Input Your Singlish"]';
 const OUTPUT_SELECTOR = 'div.w-full.h-80.p-3.rounded-lg';
 
-// --- 2. DATA DRIVEN TEST CASES (36 Cases) ---
+// --- 2. DATA DRIVEN TEST CASES (35 Functional Cases) ---
 const testCases = [
   // POSITIVE CASES (Should Pass ✅)
   { "id": "Pos_Fun_0001", "name": "Simple greeting", "lengthType": "S", "input": "oyaata dhaen hoDHAyi dha?", "expected": "ඔයාට දැන් හොඳයි ද?", "coverage": "Greeting / request / response", "focus": "Accuracy validation" },
@@ -54,6 +54,7 @@ test.describe('Assignment 1 Automation Suite', () => {
   });
 
   // A. LOOP THROUGH 35 FUNCTIONAL CASES
+  // NOTE: .only has been REMOVED so this loop runs now!
   for (const data of testCases) {
     test(`[${data.id}] ${data.name}`, async ({ page }) => {
       
@@ -63,18 +64,16 @@ test.describe('Assignment 1 Automation Suite', () => {
       await inputField.fill(data.input);
       await inputField.press('Enter');
       
-      // FIXED: Increased wait time from 2500 to 5000 to handle network lag
+      // CRITICAL: Wait 5 seconds to ensure translation is given
       await page.waitForTimeout(5000); 
 
       const outputElement = page.locator(OUTPUT_SELECTOR);
       const actualOutput = (await outputElement.innerText()).trim();
 
-      // Check Match
       const isMatch = actualOutput === data.expected;
       const status = isMatch ? 'Pass' : 'Fail';
       const icon = isMatch ? '✅' : '❌';
 
-      // PRINT ROW FOR EXCEL
       console.log(`\n--- EXCEL ROW DATA ---`);
       console.log(`${icon} ${data.id} | ${data.name} | ${data.lengthType} | ${data.input} | ${data.expected} | ${actualOutput} | ${status} | ${isMatch ? 'Success' : 'Mismatch'} | ${data.coverage} - ${data.focus}`);
       console.log(`----------------------\n`);
@@ -84,29 +83,40 @@ test.describe('Assignment 1 Automation Suite', () => {
     });
   }
 
-  // B. SPECIAL UI CASE (The 36th Case) - SAFEGUARDED AGAINST CRASHING
+  // B. SPECIAL UI CASE (Runs LAST)
   test('[Neg_UI_0001] Enter key hijacking by number suggestions', async ({ page }) => {
     const inputField = page.locator(INPUT_SELECTOR);
     
+    // Step 1: Clear and type "200"
     await inputField.clear();
     await inputField.fill('200');
-    await inputField.press('Enter');
+
+    // Step 2: Wait 6 seconds
+    await page.waitForTimeout(6000); 
     
+    // Step 3: Press Enter
+    await inputField.press('Enter');
+
+    // Step 4: Type "50"
+    await inputField.type('50');
+    
+    // Wait a moment for UI to settle
     await page.waitForTimeout(2000);
 
     const actualInput = await inputField.inputValue();
     
-    // Check if 200 is still there
-    const isSuccess = actualInput.includes('200');
+    // Validation: Check if both "200" and "50" are present
+    const isSuccess = actualInput.includes('200') && actualInput.includes('50');
+    
     const status = isSuccess ? 'Pass' : 'Fail';
     const icon = isSuccess ? '✅' : '❌';
 
-    console.log(`\n--- EXCEL ROW DATA ---`);
-    console.log(`${icon} Neg_UI_0001 | Enter key hijacking | S | Type 200 + Enter | 200 remains | ${actualInput.trim()} | ${status} | ${isSuccess ? 'Success' : 'Failed'} | Punctuation/numbers - Robustness validation`);
-    console.log(`----------------------\n`);
+    // Format newlines for Excel
+    const excelSafeOutput = actualInput.replace(/\n/g, ' [newline] ');
 
-    // NOTE: Assertion commented out so the UI test also logs failure without stopping
-    // expect(actualInput).toContain('200');
+    console.log(`\n--- EXCEL ROW DATA ---`);
+    console.log(`${icon} Neg_UI_0001 | Enter key hijacking | S | Type 200 + Enter + 3s Wait + 50 | 200 [newline] 50 | ${excelSafeOutput} | ${status} | ${isSuccess ? 'Success' : 'Failed'} | Punctuation/numbers - Robustness validation`);
+    console.log(`----------------------\n`);
   });
 
 });
