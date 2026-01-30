@@ -4,7 +4,7 @@ const { test, expect } = require('@playwright/test');
 const INPUT_SELECTOR = 'textarea[placeholder*="Input Your Singlish"]';
 const OUTPUT_SELECTOR = 'div.w-full.h-80.p-3.rounded-lg';
 
-// --- 2. DATA DRIVEN TEST CASES (35 Functional Cases) ---
+// --- 2. DATA DRIVEN TEST CASES (36 Cases) ---
 const testCases = [
   // POSITIVE CASES (Should Pass ✅)
   { "id": "Pos_Fun_0001", "name": "Simple greeting", "lengthType": "S", "input": "oyaata dhaen hoDHAyi dha?", "expected": "ඔයාට දැන් හොඳයි ද?", "coverage": "Greeting / request / response", "focus": "Accuracy validation" },
@@ -63,8 +63,8 @@ test.describe('Assignment 1 Automation Suite', () => {
       await inputField.fill(data.input);
       await inputField.press('Enter');
       
-      // Wait for output
-      await page.waitForTimeout(2500); 
+      // FIXED: Increased wait time from 2500 to 5000 to handle network lag
+      await page.waitForTimeout(5000); 
 
       const outputElement = page.locator(OUTPUT_SELECTOR);
       const actualOutput = (await outputElement.innerText()).trim();
