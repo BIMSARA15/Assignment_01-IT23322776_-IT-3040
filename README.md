@@ -87,11 +87,3 @@ When you run Option A, you will see results like this:
 ❌ **Neg_Fun_001: Mismatch** → SUCCESSFUL NEGATIVE TEST. The website failed to translate a complex phrase correctly, and our automation caught the bug.
 
 ---
-
-## 🔄 Step 6: Push to GitHub
-Don't forget to push this updated README to your repository:
-
-```powershell
-git add README.md
-git commit -m "Updated README with clear VS Code instructions and grading guide"
-git push
