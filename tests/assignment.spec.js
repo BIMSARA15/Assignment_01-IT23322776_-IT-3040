@@ -54,7 +54,7 @@ test.describe('Assignment 1 Automation Suite', () => {
   });
 
   // A. LOOP THROUGH 35 FUNCTIONAL CASES
-  // NOTE: .only has been REMOVED so this loop runs now!
+  
   for (const data of testCases) {
     test(`[${data.id}] ${data.name}`, async ({ page }) => {
       
@@ -118,5 +118,8 @@ test.describe('Assignment 1 Automation Suite', () => {
     console.log(`${icon} Neg_UI_0001 | Enter key hijacking | S | Type 200 + Enter + 3s Wait + 50 | 200 [newline] 50 | ${excelSafeOutput} | ${status} | ${isSuccess ? 'Success' : 'Failed'} | Punctuation/numbers - Robustness validation`);
     console.log(`----------------------\n`);
   });
+
+ // C. SPECIAL UI CASE (English Word Override)
+  
 
 });
